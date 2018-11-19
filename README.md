@@ -1,5 +1,5 @@
 # rerp
-Compute regression event-related potentials ("rERPs") which correct for hypothetical overlap among brain processes underlying temporally adjacent cognitive events (e.g., stimulus presentation and motor response). 
+Compute regression event-related potentials ("rERPs") which correct for hypothetical overlap among brain processes underlying temporally adjacent cognitive events (e.g., stimulus presentation and motor response). See rerp_tutorial_code.m for sample data, code, and plots.
 
 # Citations
 * Woldorff, M. G. (1993). Distortion of ERP averages due to overlap from temporally adjacent ERPs: analysis and correction. Psychophysiology, 30(1), 98-119.
