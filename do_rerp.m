@@ -171,7 +171,7 @@ for ii = 1:length(uclust),
       end
       Yhat(rflagidx==0) = B;
       Yhat(rflagidx==1) = NaN;
-
+if size(rerps,1)==1, keyboard; end
       % store output data
       rerps = cat(1,rerps,Yhat);
       rflag = cat(1,rflag,curregflag);
@@ -188,8 +188,10 @@ if size(design,2)==1,
    rerp2 = rerps(:, (length(rerpwin(1):rerpwin(2))+1):end);
 else,
   for ii = 1:size(design,2),
-    rerp1 = [rerp1; rerps(1:length(rerpwin(1):rerpwin(2)))]; rerps(1:length(rerpwin(1):rerpwin(2))) = '';
-    rerp2 = [rerp2; rerps(1:length(rerpwin(1):rerpwin(2)))]; rerps(1:length(rerpwin(1):rerpwin(2))) = '';
+    rerp1 = [rerp1; rerps(:,1:length(rerpwin(1):rerpwin(2)))]; rerps(:,1:length(rerpwin(1):rerpwin(2))) = '';
+    rerp2 = [rerp2; rerps(:,1:length(rerpwin(1):rerpwin(2)))]; rerps(:,1:length(rerpwin(1):rerpwin(2))) = '';    
   end
+  ntrial = reshape(repmat(ntrial,[1 size(design,2)])',[length(ntrial)*size(design,2) 1]);
+  rflag  = reshape( repmat(rflag,[1 size(design,2)])',[ length(rflag)*size(design,2) 1]);
 end
 rflag = logical(rflag);
