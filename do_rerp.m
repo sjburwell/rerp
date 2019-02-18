@@ -171,7 +171,7 @@ for ii = 1:length(uclust),
       end
       Yhat(rflagidx==0) = B;
       Yhat(rflagidx==1) = NaN;
-if size(rerps,1)==1, keyboard; end
+
       % store output data
       rerps = cat(1,rerps,Yhat);
       rflag = cat(1,rflag,curregflag);
