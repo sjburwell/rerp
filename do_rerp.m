@@ -4,7 +4,7 @@
 %             waves', 'weighting') may be flexibly achieved via the optional input "design."
 %
 % Usage:
-%   >> [rerp1, rerp2, rflag, ntrial] = do_rerp( data, event1, event2, varargin)
+%   >> [rerp1, rerp2, rflag, ntrial, clusterid] = do_rerp( data, event1, event2, varargin)
 %
 % Inputs (required): 
 %   data      - NxP matrix of trial-level EEG data. Rows of N may correspond to N trials of data for one 
@@ -41,6 +41,7 @@
 %               output as NaNs. 
 %   ntrial    - Cx1 numeric array consisting of the number of trials used to compute each rERP within rerp1 
 %               and rerp2.
+%   clusterid - Cx1 numeric array of the unique clusters if requested as input to the rERP computation
 %
 % Examples:
 %  
@@ -52,7 +53,7 @@
 % 
 %
 % Scott Burwell, 2018-11-18
-function [rerp1, rerp2, rflag, ntrial] = do_rerp(data, event1, event2, varargin); 
+function [rerp1, rerp2, rflag, ntrial, clusterid] = do_rerp(data, event1, event2, varargin); 
 
 %[rerp1, rerp2] = do_rerp(data, event1, event2, 'rerpwin', rerpwin, 'cluster', cluster, 'design', design);
 % uses OLS (consistent w/ standard avereage ERPs), currently only handles overlap of two events, but can model multiple factors for each event
@@ -89,10 +90,11 @@ for ii = 1:length(cluster), if ~isnan(event1(ii)), rerp1mtx(ii,event1(ii)+rerpwi
 rerp2mtx = zeros(size(data,1),size(data,length(size(data)))); 
 for ii = 1:length(cluster), if ~isnan(event2(ii)), rerp2mtx(ii,event2(ii)+rerpwin(1):event2(ii)+rerpwin(2)) = 1; end; end
 
-rerps  = [];
-rflag  = [];
-ntrial = [];
-uclust = unique(cluster);
+rerps     = [];
+rflag     = [];
+ntrial    = [];
+clusterid = [];
+uclust    = unique(cluster);
 
 for ii = 1:length(uclust),
   if verbose>0, disp(['   do_rerp; obtaining rERPs for cluster : ' num2str(uclust(ii))]); end
@@ -173,9 +175,10 @@ for ii = 1:length(uclust),
       Yhat(rflagidx==1) = NaN;
 
       % store output data
-      rerps = cat(1,rerps,Yhat);
-      rflag = cat(1,rflag,curregflag);
-      ntrial= cat(1,ntrial,size(tmpclustdata,1));
+      rerps     = cat(1,rerps,Yhat);
+      rflag     = cat(1,rflag,curregflag);
+      ntrial    = cat(1,ntrial,size(tmpclustdata,1));
+      clusterid = cat(1,clusterid,uclust(ii));
       %rimtx= cat(1,rimtx,reshape(repmat(1:size(design,2)*2,size(Yhat,2)./(size(design,2)*2),1),size(Yhat)));
       %rfmtx= cat(1,rfmtx,rflagidx);
   end
@@ -191,7 +194,8 @@ else,
     rerp1 = [rerp1; rerps(:,1:length(rerpwin(1):rerpwin(2)))]; rerps(:,1:length(rerpwin(1):rerpwin(2))) = '';
     rerp2 = [rerp2; rerps(:,1:length(rerpwin(1):rerpwin(2)))]; rerps(:,1:length(rerpwin(1):rerpwin(2))) = '';    
   end
-  ntrial = reshape(repmat(ntrial,[1 size(design,2)])',[length(ntrial)*size(design,2) 1]);
-  rflag  = reshape( repmat(rflag,[1 size(design,2)])',[ length(rflag)*size(design,2) 1]);
+  ntrial    = reshape(   repmat(ntrial,[1 size(design,2)])',[   length(ntrial)*size(design,2) 1]);
+  rflag     = reshape(    repmat(rflag,[1 size(design,2)])',[    length(rflag)*size(design,2) 1]);
+  clusterid = reshape(repmat(clusterid,[1 size(design,2)])',[length(clusterid)*size(design,2) 1]);
 end
 rflag = logical(rflag);
